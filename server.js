@@ -146,9 +146,14 @@ app.post("/api/connect", async (req, res) => {
         const team = leftCommand ? "putin" : "zelensky";
         const displayTeam = leftCommand ? round.left : round.right;
         state.teamMembers[team] = state.teamMembers[team] || [];
-        if (!state.teamMembers[team].includes(user)) state.teamMembers[team].push(user);
-        logEvent("join", "@" + user + " joined " + displayTeam + " by comment");
-        addScore(team, 1, "join", user);
+        const alreadyJoined = state.teamMembers[team].includes(user);
+        if (!alreadyJoined) {
+          state.teamMembers[team].push(user);
+          logEvent("join", "@" + user + " joined " + displayTeam + " by comment");
+          addScore(team, 1, "join", user);
+        } else {
+          logEvent("join", "@" + user + " is already on " + displayTeam);
+        }
       }
     });
     tiktokConnection.on(WebcastEvent.LIKE, data => {
