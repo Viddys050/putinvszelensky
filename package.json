@@ -1,0 +1,13 @@
+{
+  "name": "putinvszelensky-live-arena",
+  "version": "1.0.0",
+  "description": "Mobile TikTok LIVE arcade battle with PC control room",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1",
+    "tiktok-live-connector": "^2.5.0"
+  }
+}
