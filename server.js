@@ -109,7 +109,8 @@ function resetRound() {
 app.get("/health", (req, res) => res.json({ ok: true, app: "putinvszelensky-live-arena", connection: state.connection }));
 app.get("/api/state", (req, res) => res.json(state));
 app.get("/api/rounds", (req, res) => res.json({ current: { number: state.roundNumber, teams: state.teams, remaining: state.remaining, running: state.running }, history: state.roundHistory }));
-app.get("/api/health", (req, res) => res.json({ ok: true, uptimeSeconds: Math.floor(process.uptime()), connection: state.connection, roundNumber: state.roundNumber, running: state.running }));
+app.get("/api/health", (req, res) => res.json({ ok: true, uptimeSeconds: Math.floor(process.uptime()), connection: state.connection, roundNumber: state.roundNumber, running: state.running, remaining: state.remaining, viewers: state.viewers, likes: state.likes, gifts: state.giftCount, giftPoints: state.totalGiftPoints }));
+app.get("/api/metrics", (req, res) => res.json({ round: state.roundNumber, teams: state.teams, score: state.scores, teamMembers: state.teamMembers, likes: state.likes, viewers: state.viewers, gifts: state.giftCount, giftPoints: state.totalGiftPoints, supporters: state.supporters.length, connection: state.connection }));
 app.post("/api/control", (req, res) => {
   const { action, team, points, user } = req.body || {};
   if (action === "start") startRound();
@@ -135,12 +136,12 @@ app.post("/api/connect", async (req, res) => {
     state.connection = "Connecting to @" + username + "…";
     logEvent("connection", state.connection);
     tiktokConnection.on(WebcastEvent.CHAT, data => {
-      const comment = String(data.comment || "").trim().toLowerCase();
+      const comment = String(data.comment || "").normalize("NFKC").trim().toLowerCase().replace(/[.!?,]+$/g, "").replace(/\s+/g, " ");
       const user = data.nickname || data.uniqueId || "Viewer";
       logEvent("chat", "@" + user + ": " + (data.comment || ""));
       const round = rounds[roundIndex];
-      const leftCommand = round.aliasesL.includes(comment);
-      const rightCommand = round.aliasesR.includes(comment);
+      const leftCommand = round.aliasesL.includes(comment) || comment === ("join " + round.left.toLowerCase()) || comment === ("team " + round.left.toLowerCase());
+      const rightCommand = round.aliasesR.includes(comment) || comment === ("join " + round.right.toLowerCase()) || comment === ("team " + round.right.toLowerCase());
       if (leftCommand || rightCommand) {
         const team = leftCommand ? "putin" : "zelensky";
         const displayTeam = leftCommand ? round.left : round.right;
