@@ -119,6 +119,30 @@ html,body{height:100%;margin:0;overflow:hidden}
 
 /* Cinematic custom battlefield illustration */
 .arena{position:relative;background:#080d16!important;isolation:isolate}.battle-art{position:absolute;inset:0;overflow:hidden}.battle-art svg{width:100%;height:100%;display:block}.arena:before{z-index:2;pointer-events:none}.arena .arena-label,.arena .arena-call,.arena .bottom-cards{z-index:5}.arena .flag,.arena .fighterart,.arena .helicopter,.arena .explosion,.arena .city,.arena .ground,.arena .glow{display:none!important}.arena-call{top:9%!important;background:#080b12aa;border:1px solid #ffffff33;border-radius:8px;padding:8px 14px;backdrop-filter:blur(4px)}.bottom-cards .unit{backdrop-filter:blur(5px)}
+
+/* Match-specific arena lighting, color grading and identity */
+#arena[data-battle="putin-zelensky"]{--left-accent:#ff3349;--right-accent:#18a9ff}
+#arena[data-battle="usa-europe"]{--left-accent:#e83245;--right-accent:#2c83ff}
+#arena[data-battle="boys-girls"]{--left-accent:#ff4f9a;--right-accent:#bd55ff}
+#arena[data-battle="trump-kim-jong-un"]{--left-accent:#e83c4d;--right-accent:#3b8dff}
+#arena[data-battle="marvel-dc"]{--left-accent:#ff263f;--right-accent:#347bff}
+#arena[data-battle="dragons-robots"]{--left-accent:#ff762e;--right-accent:#38dfff}
+#arena[data-battle="boys-girls"] .battle-art{filter:hue-rotate(305deg) saturate(1.7) contrast(1.12)}
+#arena[data-battle="usa-europe"] .battle-art{filter:hue-rotate(8deg) saturate(1.3) contrast(1.12)}
+#arena[data-battle="trump-kim-jong-un"] .battle-art{filter:hue-rotate(15deg) saturate(1.5) contrast(1.14)}
+#arena[data-battle="marvel-dc"] .battle-art{filter:hue-rotate(330deg) saturate(1.7) contrast(1.15)}
+#arena[data-battle="dragons-robots"] .battle-art{filter:hue-rotate(165deg) saturate(1.8) contrast(1.16)}
+#arena[data-battle="boys-girls"] .arena-label:before{content:"✦  "}
+#arena[data-battle="marvel-dc"] .arena-label:before{content:"✦  "}
+#arena[data-battle="dragons-robots"] .arena-label:before{content:"⚡  "}
+#arena[data-battle="usa-europe"] .arena-label:before{content:"★  "}
+#arena[data-battle="trump-kim-jong-un"] .arena-label:before{content:"⚠  "}
+#arena[data-battle="boys-girls"] .flag.r{background:#ff4f86;border-color:#ff9fcb}
+#arena[data-battle="boys-girls"] .flag.b{background:#a94cff;border-color:#e2a8ff}
+#arena[data-battle="marvel-dc"] .flag.r{background:#c91e35;border-color:#ff7c8a}
+#arena[data-battle="marvel-dc"] .flag.b{background:#123b8c;border-color:#65a5ff}
+#arena[data-battle="dragons-robots"] .flag.r{background:#a33a17;border-color:#ff9b55}
+#arena[data-battle="dragons-robots"] .flag.b{background:#07516d;border-color:#58e6ff}
 </style></head>
 <body><div class="wrap">\n<div class="musicbar"><button class="musicbtn" id="musicBtn" type="button">▶ PLAY MUSSULO</button><span class="musicnote" id="musicNote">Tap to start background music</span><div id="ytAudio" class="yt-audio"></div></div>
 <header class="teams">
