@@ -296,7 +296,7 @@ body.game-fullscreen .wrap{width:100%!important;max-width:none!important;height:
 #musicBtn,#fullscreenBtn{position:relative;z-index:10;min-height:34px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;cursor:pointer}
 .musicbar{position:relative;z-index:20}
 @media(max-width:650px){#fullscreenBtn{font-size:9px!important;padding:5px 7px!important;min-width:82px}.musicbar #musicBtn{min-width:36px;min-height:34px}}
-</style></body></html>
+</style>
 <style>
 /* Per-round identity: team colors and scene atmosphere adapt to the live matchup. */
 #arena{--left-accent:#ff3349;--right-accent:#18a9ff}
@@ -313,3 +313,23 @@ body.game-fullscreen .wrap{width:100%!important;max-width:none!important;height:
 .join-side{transition:background .25s,border-color .25s}
 @media(max-width:420px){.arena-call{font-size:clamp(13px,3.8vw,19px)}.arena-call small{font-size:8px;letter-spacing:1px}}
 </style>
+<style id="battlefield-motion-fix">
+#arena{position:relative;isolation:isolate}
+#arena .battle-art{position:absolute;inset:0;z-index:0;overflow:hidden}
+#arena .battle-art svg{width:100%;height:100%;display:block}
+#arena .battle-art svg g[transform^="translate(165 485)"],#arena .battle-art svg g[transform^="translate(735 490)"]{animation:tankAdvance 4.8s ease-in-out infinite alternate;transform-box:fill-box}
+#arena .battle-art svg g[transform^="translate(735 490)"]{animation-delay:-2.4s}
+#arena .battle-art svg g[transform^="translate(285 205)"],#arena .battle-art svg g[transform^="translate(640 235)"]{animation:heliDrift 6s ease-in-out infinite alternate}
+#arena .battle-art svg g[transform^="translate(640 235)"]{animation-delay:-3s}
+#arena .battle-art svg g[transform^="translate(215 390)"],#arena .battle-art svg g[transform^="translate(685 390)"]{animation:commanderPulse 2.5s ease-in-out infinite alternate;transform-box:fill-box}
+#arena .battle-art svg g[transform^="translate(685 390)"]{animation-delay:-1.2s}
+#arena .arena-call{padding:7px 12px;border:1px solid #ffffff40;border-radius:5px;background:#050914a8;box-shadow:0 0 25px #0009;backdrop-filter:blur(3px)}
+#arena .bottom-cards .unit{backdrop-filter:blur(4px)}
+#arena.flash{animation:battleImpact .45s ease-out}
+@keyframes tankAdvance{from{translate:0 0}to{translate:0 -5px}}
+@keyframes heliDrift{from{translate:-10px 0}to{translate:14px 8px}}
+@keyframes commanderPulse{from{filter:brightness(.85)}to{filter:brightness(1.25) drop-shadow(0 0 12px #ffffff30)}}
+@keyframes battleImpact{0%{filter:brightness(1)}35%{filter:brightness(1.8) saturate(1.4)}100%{filter:brightness(1)}}
+#musicBtn:active,#fullscreenBtn:active{transform:scale(.96)}
+#musicBtn:focus-visible,#fullscreenBtn:focus-visible{outline:2px solid #ffd66b;outline-offset:2px}
+</style></body></html>
