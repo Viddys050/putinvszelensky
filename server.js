@@ -34,7 +34,11 @@ const state = {
   events: [],
   connection: "Not connected",
   username: "",
-  winner: null
+  winner: null,
+  roundHistory: [],
+  teamMembers: { putin: [], zelensky: [] },
+  giftCount: 0,
+  totalGiftPoints: 0
 };
 let roundTimer = null;
 let nextRoundTimer = null;
