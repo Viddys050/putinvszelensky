@@ -60,7 +60,7 @@ function addScore(team, points, source, user = "Viewer") {
 }
 function stopRound() {
   clearInterval(roundTimer); roundTimer = null; state.running = false;
-  state.winner = state.scores.putin === state.scores.zelensky ? "DRAW" : state.scores.putin > state.scores.zelensky ? "PUTIN WINS" : "ZELENSKY WINS";
+  state.winner = state.scores.putin === state.scores.zelensky ? "DRAW" : state.scores.putin > state.scores.zelensky ? state.teams.left + " WINS" : state.teams.right + " WINS";
   logEvent("round", "ROUND " + state.roundNumber + " OVER — " + state.winner);
   clearTimeout(nextRoundTimer);
   nextRoundTimer = setTimeout(() => {
