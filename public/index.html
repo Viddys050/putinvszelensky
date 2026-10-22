@@ -75,6 +75,35 @@ pointer-events:none;z-index:1}
 .join-side.right{background:linear-gradient(90deg,#092b50,#071521);border:1px solid #27aaff;color:#a7ddff}
 .join-side small{display:block;font-size:10px;font-weight:600;margin-top:3px;color:#fff}
 .join-footer{font-size:10px;color:#e5e7eb;margin-top:7px}
+
+/* Phone-first live layout: prioritize battle, team commands and gifts */
+@media(max-width:600px){
+ html,body{height:100%;min-height:100%;overflow:hidden}
+ .wrap{height:100svh;max-height:100svh;overflow:hidden;padding:4px 5px 5px;display:flex;flex-direction:column;gap:4px}
+ .musicbar{flex:0 0 auto;margin:0;padding:4px 6px;gap:7px;min-height:30px}
+ .musicbtn{padding:6px 9px;font-size:11px}.musicnote{font-size:9px}
+ .teams{flex:0 0 auto;grid-template-columns:minmax(0,1fr) 72px minmax(0,1fr);gap:3px}
+ .team{padding:4px;border-radius:5px}.teamhead{min-height:20px;gap:3px}.face{font-size:20px}
+ .teamname{font-size:clamp(11px,3.3vw,16px);line-height:1.05}
+ .score{font-size:clamp(23px,7vw,34px);line-height:1.05;margin:2px 0}
+ .bar{height:6px;margin:3px 0}.players{font-size:8px;margin-top:2px}
+ .clockbox{padding:5px 1px;border-radius:5px}.round{font-size:9px;letter-spacing:0}
+ .clock{font-size:clamp(20px,6vw,29px);line-height:1.05}.live{font-size:7px;margin-top:2px}
+ .arena{flex:1 1 auto;height:auto;min-height:0;max-height:none;margin:0;border-radius:7px}
+ .arena-label{top:7px;font-size:9px}.arena-call{top:25%;font-size:10px}.arena-call small{font-size:8px}
+ .flag{font-size:clamp(34px,10vw,56px)}.fighterart{font-size:clamp(60px,18vw,105px)}
+ .helicopter{font-size:24px}.explosion{font-size:25px}
+ .bottom-cards{bottom:5px;gap:4px;padding:0 5px}.unit{font-size:22px;padding:4px 2px;border-radius:4px}.unit span{font-size:7px}
+ .join-panel{flex:0 0 auto;margin:0;padding:6px 7px;border-radius:5px}
+ .join-title{font-size:12px;line-height:1.1}.join-sub{font-size:9px;margin-top:2px}
+ .join-options{gap:5px;margin-top:5px}.join-side{padding:5px 3px;font-size:12px;border-radius:4px}
+ .join-side small{font-size:8px;margin-top:1px}.join-footer{font-size:8px;margin-top:4px;line-height:1.1}
+ .gift-title{flex:0 0 auto;font-size:10px;margin:0;text-align:center;line-height:1.1}
+ .gifts{flex:0 0 auto;gap:4px}.gift{padding:3px 1px;border-radius:4px}
+ .gift .emoji{font-size:clamp(20px,6vw,31px)}.gift .mult{font-size:10px;line-height:1.1}.gift .pts{font-size:8px;line-height:1.1}
+ .columns,.last,#winner,.status{display:none!important}
+}
+@media(max-width:380px){.musicnote{max-width:100px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.teams{grid-template-columns:minmax(0,1fr) 66px minmax(0,1fr)}.teamname{font-size:11px}.join-footer{display:none}}
 </style></head>
 <body><div class="wrap">\n<div class="musicbar"><button class="musicbtn" id="musicBtn" type="button">▶ PLAY MUSSULO</button><span class="musicnote" id="musicNote">Tap to start background music</span><div id="ytAudio" class="yt-audio"></div></div>
 <header class="teams">
