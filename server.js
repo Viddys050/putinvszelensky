@@ -117,6 +117,20 @@ app.post("/api/control", (req, res) => {
   else if (action === "reset") resetRound();
   else if (action === "score") addScore(team, Math.max(1, Math.min(100000, Number(points) || 1)), "manual", user || "Host");
   else if (action === "stop") { clearInterval(roundTimer); roundTimer = null; state.running = false; emitState(); }
+  else if (action === "offline") {
+    state.connection = "Offline mode — local game active";
+    state.viewers = 0;
+    logEvent("connection", "OFFLINE MODE ACTIVE — game runs without TikTok");
+    if (!state.running) startRound();
+    const team = Math.random() < 0.5 ? "putin" : "zelensky";
+    const displayTeam = team === "putin" ? state.teams.left : state.teams.right;
+    const sampleUser = "OfflinePlayer" + (Math.floor(Math.random() * 900) + 100);
+    state.teamMembers[team] = state.teamMembers[team] || [];
+    state.teamMembers[team].push(sampleUser);
+    addScore(team, 10, "gift", sampleUser);
+    state.giftCount += 1; state.totalGiftPoints += 10;
+    logEvent("gift", sampleUser + " sent a test Rose for " + displayTeam);
+  }
   else if (action === "demo") {
     state.viewers = 17;
     logEvent("demo", "DEMO TEST EVENT — TikTok is not connected");
