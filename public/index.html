@@ -223,7 +223,51 @@ function render(s){if(!s)return;applyBattleTheme(s);const p=Number(s.scores?.put
 function renderEvents(events){$("events").innerHTML=events.slice(0,5).map(e=>'<div class="rowitem"><span class="eventicon">'+(e.type==="gift"?"🎁":e.type==="likes"?"❤️":e.type==="chat"?"💬":e.type==="round"?"⚡":"📡")+'</span><span class="eventtext">'+esc(e.text||"Battle event")+'</span></div>').join("")}
 let musicOn=false;function toggleMusic(){const host=$("ytAudio"),btn=$("musicBtn");if(!musicOn){host.innerHTML='<iframe title="Mussulo background music" width="1" height="1" src="https://www.youtube-nocookie.com/embed/ZlYXfm5oM6s?autoplay=1&loop=1&playlist=ZlYXfm5oM6s&controls=0&playsinline=1" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>';musicOn=true;btn.textContent="⏸ STOP MUSSULO";$("musicNote").textContent="Music started • tap stop to pause";}else{host.innerHTML="";musicOn=false;btn.textContent="▶ PLAY MUSSULO";$("musicNote").textContent="Tap to start background music";}}$("musicBtn").addEventListener("click",toggleMusic);
 try{const socket=io();socket.on("initial",d=>{render(d.state);if(d.events)renderEvents(d.events)});socket.on("state",render);socket.on("event",e=>{const a=$("arena");a.classList.remove("flash");void a.offsetWidth;a.classList.add("flash");if(e.text){const current=$("events").innerHTML;$("events").innerHTML='<div class="rowitem"><span class="eventicon">'+(e.type==="gift"?"🎁":e.type==="likes"?"❤️":"⚡")+'</span><span class="eventtext">'+esc(e.text)+'</span></div>'+current.split("</div></div>")[0]+"</div></div>";}});socket.on("connect",()=>$("status").textContent="GAME SERVER CONNECTED");socket.on("connect_error",()=>$("status").textContent="GAME SERVER OFFLINE");}catch(e){$("status").textContent="GAME SERVER OFFLINE"}
-</script></body></html>
+</script>
+<style id="reference-layout-fix">
+/* Reference composition: keep each game section in its own stable row. */
+html,body{width:100%;min-height:100%;height:100%;overflow-x:hidden}
+body{overflow-y:auto}
+.wrap{display:flex!important;flex-direction:column!important;gap:7px!important;width:100%;max-width:560px!important;height:auto!important;min-height:100svh;max-height:none!important;margin:0 auto;padding:7px 7px 18px!important;overflow:visible!important}
+.musicbar{flex:0 0 auto;min-height:38px;margin:0!important}
+.teams{flex:0 0 auto;min-height:88px;grid-template-columns:minmax(0,1fr) 86px minmax(0,1fr)!important;gap:5px!important}
+.team{min-width:0;padding:7px 6px!important}
+.arena{flex:0 0 auto!important;width:100%;height:auto!important;aspect-ratio: .94 / 1;min-height:350px!important;max-height:none!important;margin:0!important;position:relative}
+.battle-art{position:absolute;inset:0}
+.battle-art svg{width:100%;height:100%;object-fit:cover}
+.arena-call{max-width:86%;white-space:normal!important;line-height:1.15;top:7%!important;padding:7px 10px!important;font-size:clamp(11px,3.2vw,17px)!important}
+.arena-call small{font-size:8px!important;letter-spacing:1px}
+.bottom-cards{bottom:8px!important;left:7px!important;right:7px!important;width:auto!important;gap:5px!important;padding:0!important}
+.unit{min-width:0;padding:5px 2px!important}
+.join-panel{flex:0 0 auto!important;margin:0!important;padding:9px!important}
+.gift-title{flex:0 0 auto;margin:1px 0 0!important;text-align:center}
+.gifts{flex:0 0 auto;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px!important}
+.gift{min-width:0;padding:7px 2px!important}
+.columns{flex:0 0 auto;display:grid!important;grid-template-columns:1fr .9fr 1fr!important;gap:5px!important;margin-top:0!important}
+.panel{min-height:155px}
+.panelhead{line-height:1.15}
+.rowitem{min-width:0}
+.last{flex:0 0 auto;display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px!important;margin-top:0!important}
+#winner,.status{flex:0 0 auto}
+@media(max-width:390px){
+ .wrap{padding:5px 5px 14px!important;gap:5px!important}
+ .teams{grid-template-columns:minmax(0,1fr) 68px minmax(0,1fr)!important;min-height:78px}
+ .teamname{font-size:clamp(10px,3.2vw,14px)!important}
+ .clock{font-size:clamp(19px,5.8vw,25px)!important}
+ .arena{aspect-ratio:.88 / 1;min-height:320px!important}
+ .join-sub{line-height:1.2}
+ .join-footer{line-height:1.2}
+ .columns{grid-template-columns:1fr .85fr 1fr!important;gap:3px!important}
+ .panel{min-height:145px}
+ .panelhead{font-size:8px!important;padding:5px 3px!important}
+ .rowitem{font-size:8px!important;padding:4px 3px!important}
+ .rank{display:inline-block!important;min-width:10px}
+ .eventicon{font-size:12px}
+ .eventtext{font-size:8px!important}
+ .mapmini{min-height:120px;height:calc(100% - 24px)!important}
+}
+</style>
+</body></html>
 <style>
 /* Per-round identity: team colors and scene atmosphere adapt to the live matchup. */
 #arena{--left-accent:#ff3349;--right-accent:#18a9ff}
