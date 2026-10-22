@@ -48,7 +48,16 @@ function logEvent(type, text, extra = {}) {
   io.emit("event", event);
   emitState();
 }
-function addScore(team, points, source, user = "Viewer") {
+function giftPoints(giftName) {
+  const name = String(giftName || "").toLowerCase();
+  if (name.includes("rose")) return 10;
+  if (name.includes("finger heart") || name.includes("heart me")) return 30;
+  if (name.includes("perfume") || name.includes("gift")) return 150;
+  if (name.includes("tiktok") || name.includes("music")) return 500;
+  if (name.includes("crown") || name.includes("universe") || name.includes("galaxy")) return 1500;
+  return 10;
+}
+\nfunction addScore(team, points, source, user = "Viewer") {
   if (!["putin", "zelensky"].includes(team)) return;
   state.scores[team] += points;
   const found = state.supporters.find(x => x.user === user && x.team === team);
@@ -61,7 +70,7 @@ function addScore(team, points, source, user = "Viewer") {
 function stopRound() {
   clearInterval(roundTimer); roundTimer = null; state.running = false;
   state.winner = state.scores.putin === state.scores.zelensky ? "DRAW" : state.scores.putin > state.scores.zelensky ? state.teams.left + " WINS" : state.teams.right + " WINS";
-  logEvent("round", "ROUND " + state.roundNumber + " OVER — " + state.winner);
+  state.roundHistory.unshift({ round: state.roundNumber, left: state.teams.left, right: state.teams.right, leftScore: state.scores.putin, rightScore: state.scores.zelensky, winner: state.winner, endedAt: new Date().toISOString() });\n  state.roundHistory = state.roundHistory.slice(0, 20);\n  logEvent("round", "ROUND " + state.roundNumber + " OVER — " + state.winner);
   clearTimeout(nextRoundTimer);
   nextRoundTimer = setTimeout(() => {
     roundIndex = (roundIndex + 1) % rounds.length;
@@ -91,7 +100,7 @@ function resetRound() {
   logEvent("round", "NEW ROUND READY");
 }
 app.get("/health", (req, res) => res.json({ ok: true, app: "putinvszelensky-live-arena", connection: state.connection }));
-app.get("/api/state", (req, res) => res.json(state));
+app.get("/api/state", (req, res) => res.json(state));\napp.get("/api/rounds", (req, res) => res.json({ current: { number: state.roundNumber, teams: state.teams, remaining: state.remaining, running: state.running }, history: state.roundHistory }));\napp.get("/api/health", (req, res) => res.json({ ok: true, uptimeSeconds: Math.floor(process.uptime()), connection: state.connection, roundNumber: state.roundNumber, running: state.running }));
 app.post("/api/control", (req, res) => {
   const { action, team, points, user } = req.body || {};
   if (action === "start") startRound();
