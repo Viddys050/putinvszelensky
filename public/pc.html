@@ -14,6 +14,20 @@
 const $=id=>document.getElementById(id);function eventLine(e){const d=document.createElement("div");d.className="event";const t=document.createElement("time");t.textContent=e.time||"";const s=document.createElement("span");s.textContent=e.text||"";d.append(t,s);$("feed").prepend(d);while($("feed").children.length>80)$("feed").lastChild.remove()}
 function render(s){if(!s)return;$("ps").textContent=s.scores.putin;$("zs").textContent=s.scores.zelensky;$("leftLabel").textContent=s.teams.left;$("rightLabel").textContent=s.teams.right;$("timer").textContent=String(Math.floor(s.remaining/60)).padStart(2,"0")+":"+String(s.remaining%60).padStart(2,"0");$("round").textContent=s.running?"ROUND IN PROGRESS":(s.winner?"ROUND FINISHED":"ROUND READY");$("winner").textContent=s.winner||"";$("connection").textContent=s.connection||"Not connected";$("viewers").textContent=s.viewers||"—";$("likes").textContent=s.likes||0;$("supporters").innerHTML="";(s.supporters||[]).forEach(x=>{const p=document.createElement("p");p.textContent=(x.team==="putin"?"🇷🇺 ":"🇺🇦 ")+x.user+" — "+x.points+" pts";$("supporters").append(p)});if(!s.supporters||!s.supporters.length)$("supporters").textContent="No supporters yet"}
 const socket=io();socket.on("initial",d=>{render(d.state);$("feed").innerHTML="";(d.events||[]).slice().reverse().forEach(eventLine)});socket.on("state",render);socket.on("event",eventLine);socket.on("connect_error",()=>$("connection").textContent="Cannot connect to game server");
-async function post(body){try{const r=await fetch("/api/"+(body.username?"connect":"control"),{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const d=await r.json();if(!r.ok)alert(d.error||"Request failed");if(d.state)render(d.state)}catch(e){alert("Server request failed. Check that this page is hosted by the new app.")}}
+async function post(body){
+ const buttons=[...document.querySelectorAll("button")];
+ const clicked=buttons.find(b=>b.onclick&&b.onclick.toString().includes("post("));
+ try{
+  const endpoint="/api/"+(body.username?"connect":"control");
+  const r=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),cache:"no-store"});
+  const raw=await r.text();let d={};try{d=JSON.parse(raw)}catch{}
+  if(!r.ok){$("connection").textContent="ERROR: "+(d.error||raw||("HTTP "+r.status));alert(d.error||("Request failed (HTTP "+r.status+")"));return}
+  if(d.state)render(d.state);
+  if(body.action==="start")$("round").textContent="ROUND STARTING…";
+  if(body.action==="offline")$("connection").textContent="Offline battle running — TikTok not connected";
+  if(body.action==="demo")$("connection").textContent="Demo event sent — this is not a TikTok connection";
+  if(d.message&&body.username)$("connection").textContent=d.message;
+ }catch(e){$("connection").textContent="Could not reach /api endpoint: "+e.message;alert("Game server unreachable. Open the Render game URL and try again.")}
+}
 $("connect").onclick=()=>post({username:$("username").value});$("start").onclick=()=>post({action:"start"});$("stop").onclick=()=>post({action:"stop"});$("reset").onclick=()=>post({action:"reset"});$("demo").onclick=()=>post({action:"demo"});$("offline").onclick=()=>post({action:"offline"});$("add").onclick=()=>post({action:"score",team:$("team").value,points:Number($("points").value)});
 </script></body></html>
