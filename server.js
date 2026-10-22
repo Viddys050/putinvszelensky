@@ -158,4 +158,4 @@ io.on("connection", socket => {
 });
 app.get("/pc", (req, res) => res.sendFile(path.join(__dirname, "public", "pc.html")));
 app.get("/pc.html", (req, res) => res.sendFile(path.join(__dirname, "public", "pc.html")));
-server.listen(PORT, "0.0.0.0", () => console.log("PUTIN vs ZELENSKY arena listening on " + PORT));
+server.listen(PORT, "0.0.0.0", () => { console.log("PUTIN vs ZELENSKY arena listening on " + PORT); setTimeout(() => { if (!state.running) startRound(); }, 1000); });
