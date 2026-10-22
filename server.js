@@ -12,12 +12,12 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public"), { extensions: ["html"] }));
 
 const rounds = [
-  { left: "PUTIN", right: "ZELENSKY", aliasesL: ["putin","p","🇷🇺"], aliasesR: ["zelensky","zelenski","z","🇺🇦"] },
-  { left: "USA", right: "EUROPE", aliasesL: ["usa","america","us","🇺🇸"], aliasesR: ["europe","eu","🇪🇺"] },
-  { left: "BOYS", right: "GIRLS", aliasesL: ["boys","boy","b","👦"], aliasesR: ["girls","girl","g","👧"] },
-  { left: "TRUMP", right: "KIM JONG UN", aliasesL: ["trump","t"], aliasesR: ["kim","kim jong un","kju"] },
-  { left: "MARVEL", right: "DC", aliasesL: ["marvel","m"], aliasesR: ["dc","d"] },
-  { left: "DRAGONS", right: "ROBOTS", aliasesL: ["dragons","dragon"], aliasesR: ["robots","robot"] }
+  { left: "PUTIN", right: "ZELENSKY", aliasesL: ["putin","p","join putin","team putin","🇷🇺"], aliasesR: ["zelensky","zelenski","z","join zelensky","team zelensky","🇺🇦"] },
+  { left: "USA", right: "EUROPE", aliasesL: ["usa","america","us","join usa","team usa","🇺🇸"], aliasesR: ["europe","eu","join europe","team europe","🇪🇺"] },
+  { left: "BOYS", right: "GIRLS", aliasesL: ["boys","boy","b","join boys","team boys","👦"], aliasesR: ["girls","girl","g","join girls","team girls","👧"] },
+  { left: "TRUMP", right: "KIM JONG UN", aliasesL: ["trump","t","join trump","team trump","🇺🇸"], aliasesR: ["kim","kim jong un","kju","join kim","team kim","🇰🇵"] },
+  { left: "MARVEL", right: "DC", aliasesL: ["marvel","m","join marvel","team marvel"], aliasesR: ["dc","d","join dc","team dc"] },
+  { left: "DRAGONS", right: "ROBOTS", aliasesL: ["dragons","dragon","join dragons","team dragons"], aliasesR: ["robots","robot","join robots","team robots"] }
 ];
 let roundIndex = 0;
 const state = {
@@ -81,7 +81,7 @@ function stopRound() {
     state.teams = { left: rounds[roundIndex].left, right: rounds[roundIndex].right };
     state.scores = { putin: 0, zelensky: 0 };
     state.remaining = state.roundSeconds; state.likes = 0; state.winner = null;
-    state.supporters = []; state.events = [];
+    state.supporters = []; state.events = []; state.teamMembers = { putin: [], zelensky: [] };
     logEvent("round", "NEXT BATTLE: " + state.teams.left + " VS " + state.teams.right);
     startRound();
   }, 5000);
@@ -98,7 +98,7 @@ function startRound() {
 }
 function resetRound() {
   clearInterval(roundTimer); roundTimer = null; clearTimeout(nextRoundTimer);
-  state.scores = { putin: 0, zelensky: 0 }; state.remaining = state.roundSeconds;
+  state.scores = { putin: 0, zelensky: 0 }; state.teamMembers = { putin: [], zelensky: [] }; state.remaining = state.roundSeconds;
   state.running = false; state.likes = 0; state.winner = null; state.supporters = []; state.events = [];
   logEvent("round", "NEW ROUND READY");
 }
@@ -135,8 +135,16 @@ app.post("/api/connect", async (req, res) => {
       const user = data.nickname || data.uniqueId || "Viewer";
       logEvent("chat", "@" + user + ": " + (data.comment || ""));
       const round = rounds[roundIndex];
-      if (round.aliasesL.includes(comment)) addScore("putin", 1, "comment", user);
-      if (round.aliasesR.includes(comment)) addScore("zelensky", 1, "comment", user);
+      const leftCommand = round.aliasesL.includes(comment);
+      const rightCommand = round.aliasesR.includes(comment);
+      if (leftCommand || rightCommand) {
+        const team = leftCommand ? "putin" : "zelensky";
+        const displayTeam = leftCommand ? round.left : round.right;
+        state.teamMembers[team] = state.teamMembers[team] || [];
+        if (!state.teamMembers[team].includes(user)) state.teamMembers[team].push(user);
+        logEvent("join", "@" + user + " joined " + displayTeam + " by comment");
+        addScore(team, 1, "join", user);
+      }
     });
     tiktokConnection.on(WebcastEvent.LIKE, data => {
       state.likes += Number(data.likeCount || 1);
