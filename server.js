@@ -57,7 +57,8 @@ function giftPoints(giftName) {
   if (name.includes("crown") || name.includes("universe") || name.includes("galaxy")) return 1500;
   return 10;
 }
-\nfunction addScore(team, points, source, user = "Viewer") {
+
+function addScore(team, points, source, user = "Viewer") {
   if (!["putin", "zelensky"].includes(team)) return;
   state.scores[team] += points;
   const found = state.supporters.find(x => x.user === user && x.team === team);
@@ -70,7 +71,9 @@ function giftPoints(giftName) {
 function stopRound() {
   clearInterval(roundTimer); roundTimer = null; state.running = false;
   state.winner = state.scores.putin === state.scores.zelensky ? "DRAW" : state.scores.putin > state.scores.zelensky ? state.teams.left + " WINS" : state.teams.right + " WINS";
-  state.roundHistory.unshift({ round: state.roundNumber, left: state.teams.left, right: state.teams.right, leftScore: state.scores.putin, rightScore: state.scores.zelensky, winner: state.winner, endedAt: new Date().toISOString() });\n  state.roundHistory = state.roundHistory.slice(0, 20);\n  logEvent("round", "ROUND " + state.roundNumber + " OVER — " + state.winner);
+  state.roundHistory.unshift({ round: state.roundNumber, left: state.teams.left, right: state.teams.right, leftScore: state.scores.putin, rightScore: state.scores.zelensky, winner: state.winner, endedAt: new Date().toISOString() });
+  state.roundHistory = state.roundHistory.slice(0, 20);
+  logEvent("round", "ROUND " + state.roundNumber + " OVER — " + state.winner);
   clearTimeout(nextRoundTimer);
   nextRoundTimer = setTimeout(() => {
     roundIndex = (roundIndex + 1) % rounds.length;
@@ -100,7 +103,9 @@ function resetRound() {
   logEvent("round", "NEW ROUND READY");
 }
 app.get("/health", (req, res) => res.json({ ok: true, app: "putinvszelensky-live-arena", connection: state.connection }));
-app.get("/api/state", (req, res) => res.json(state));\napp.get("/api/rounds", (req, res) => res.json({ current: { number: state.roundNumber, teams: state.teams, remaining: state.remaining, running: state.running }, history: state.roundHistory }));\napp.get("/api/health", (req, res) => res.json({ ok: true, uptimeSeconds: Math.floor(process.uptime()), connection: state.connection, roundNumber: state.roundNumber, running: state.running }));
+app.get("/api/state", (req, res) => res.json(state));
+app.get("/api/rounds", (req, res) => res.json({ current: { number: state.roundNumber, teams: state.teams, remaining: state.remaining, running: state.running }, history: state.roundHistory }));
+app.get("/api/health", (req, res) => res.json({ ok: true, uptimeSeconds: Math.floor(process.uptime()), connection: state.connection, roundNumber: state.roundNumber, running: state.running }));
 app.post("/api/control", (req, res) => {
   const { action, team, points, user } = req.body || {};
   if (action === "start") startRound();
@@ -144,7 +149,9 @@ app.post("/api/connect", async (req, res) => {
       logEvent("gift", "🎁 " + user + " sent " + gift);
       const target = state.scores.putin <= state.scores.zelensky ? "putin" : "zelensky";
       const count = Math.max(1, Number(data.repeatCount || 1));
-      addScore(target, 10 * count, "gift", user);
+      const points = giftPoints(gift) * count;
+      state.giftCount += count; state.totalGiftPoints += points;
+      addScore(target, points, "gift", user);
     });
     tiktokConnection.on(WebcastEvent.ROOM_USER, data => { state.viewers = Number(data.viewerCount || state.viewers); emitState(); });
     tiktokConnection.on("connected", () => { state.connection = "Connected to @" + username; logEvent("connection", state.connection); });
